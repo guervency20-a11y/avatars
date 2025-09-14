@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reproductor de Audio Avanzado con Avatares Múltiples</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="audio.css">
+</head>
+<body>
+
+    <div class="audio-player">
+        <div class="expand-button" aria-label="Expandir reproductor"></div>
+
+        <div class="player-extended">
+            <div class="nav-button prev" role="button">‹</div>
+            <div class="play-button-main" role="button" aria-label="Play/Pausa">
+                <div class="play-icon"></div>
+            </div>
+            <div class="nav-button next" role="button">›</div>
+
+            <div class="narrator-control">
+                <div class="narrators-button" role="button" aria-label="Seleccionar narrador"></div>
+                <div class="narrators-selector">
+                    <!-- NOTE: removí 'loop' de los preview para respetar tu pedido "cada video debe ir de inicio a fin" -->
+                    <div class="narrator-option active" data-narrator="1" data-name="Nara">
+                        <video class="preview-video" muted autoplay>
+                            <source src="video/nara-espera.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="narrator-option" data-narrator="2" data-name="Ava">
+                        <video class="preview-video" muted autoplay>
+                            <source src="video/ava-espera.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="narrator-option" data-narrator="3" data-name="Vid">
+                        <video class="preview-video" muted autoplay>
+                            <source src="video/vid-espera.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="narrator-option" data-narrator="4" data-name="Marco">
+                        <video class="preview-video" muted autoplay>
+                            <source src="video/marco-espera.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="music-button" role="button" aria-label="Música"></div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="time-display">0:00</div>
+            </div>
+
+            <div class="speed-control">
+                <div class="speed-button" data-speed="0.75">0.75x</div>
+                <div class="speed-button active" data-speed="1">1x</div>
+                <div class="speed-button" data-speed="1.25">1.25x</div>
+                <div class="speed-button" data-speed="1.5">1.5x</div>
+            </div>
+
+            <div class="equalizer">
+                <div class="eq-bar" style="height: 8px;"></div>
+                <div class="eq-bar" style="height: 12px;"></div>
+                <div class="eq-bar" style="height: 6px;"></div>
+                <div class="eq-bar" style="height: 14px;"></div>
+                <div class="eq-bar" style="height: 10px;"></div>
+            </div>
+        </div>
+
+        <div class="player-closed">
+            <!-- removí loop del avatar de "sleep" para respetar "solo de inicio a fin" -->
+            <video class="avatar-video" id="avatarVideoSleep" muted></video>
+            <video class="avatar-video" id="avatarVideoSpeak"></video>
+        </div>
+    </div>
+
+    <div class="sections-container">
+         <section class="content-section">
+            <h2>Sección 1</h2>
+            <div class="containers-wrapper">
+                <div class="content-container">
+                    <button class="container-play-btn" data-video-index="1">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="video-overlay-container">
+                        <video class="overlay-video"></video>
+                    </div>
+                    <h3>Contenedor 1</h3>
+                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <div class="audio-indicator">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Reproduciendo contenido</span>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <!-- ojo: índice 3 -> algunos narradores no tienen 4 clips; ahora hay fallback -->
+                    <button class="container-play-btn" data-video-index="2">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="video-overlay-container">
+                        <video class="overlay-video"></video>
+                    </div>
+                    <h3>Contenedor 4 <br>aunque deveria ser 2 carajo!</h3>
+                    <p>Este contenedor reproduce el cuarto video (índice 3) del avatar seleccionado; si no existe, reproducirá el último clip disponible.</p>
+                    <div class="audio-indicator">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Reproduciendo contenido</span>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <button class="container-play-btn" data-video-index="3">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="video-overlay-container">
+                        <video class="overlay-video"></video>
+                    </div>
+                    <h3>Contenedor 3 pa manana</h3>
+                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <div class="audio-indicator">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Reproduciendo contenido</span>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <button class="container-play-btn" data-video-index="4">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="video-overlay-container">
+                        <video class="overlay-video"></video>
+                    </div>
+                    <h3>Contenedor 4 manana tambien</h3>
+                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <div class="audio-indicator">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Reproduciendo contenido</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="audio/background.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- Carga del script del reproductor (archivo externo) -->
+    <script src="audio.js"></script>
+
+    <!-- Script de los contenedores -->
+    <script>
+    // Módulo para gestionar los contenedores de contenido
+    const ContentContainers = (() => {
+        let currentlyPlayingButton = null; // guardamos el botón que inició la reproducción
+        const playButtons = document.querySelectorAll('.container-play-btn');
+        const mainPlayer = document.querySelector('.audio-player');
+
+        function init() {
+            playButtons.forEach(button => {
+                button.addEventListener('click', handleContainerPlay);
+            });
+        }
+
+        function handleContainerPlay(e) {
+            const button = e.currentTarget;
+            const container = button.closest('.content-container');
+            const videoOverlay = container.querySelector('.video-overlay-container');
+            const videoElement = container.querySelector('.overlay-video');
+            const icon = button.querySelector('i');
+
+            // Si ya está reproduciéndose este contenedor -> pausarlo
+            if (currentlyPlayingButton === button) {
+                pauseContainerPlayback(videoElement, videoOverlay, icon);
+                currentlyPlayingButton = null;
+                return;
+            }
+
+            // Si hay otro contenedor reproduciendo, detenerlo
+            if (currentlyPlayingButton) {
+                const prevButton = currentlyPlayingButton;
+                const prevContainer = prevButton.closest('.content-container');
+                const prevVideoElement = prevContainer.querySelector('.overlay-video');
+                const prevVideoOverlay = prevContainer.querySelector('.video-overlay-container');
+                const prevIcon = prevButton.querySelector('i');
+                pauseContainerPlayback(prevVideoElement, prevVideoOverlay, prevIcon);
+                currentlyPlayingButton = null;
+            }
+
+            // Pedimos el índice del video
+            let videoIndex = parseInt(button.getAttribute('data-video-index'), 10);
+
+            // Obtenemos secuencia del narrador actual
+            const narrator = AudioPlayer.getCurrentNarrator();
+            if (!narrator || !Array.isArray(narrator.speakSequence) || narrator.speakSequence.length === 0) {
+                console.error('Narrador actual sin secuencia de videos.');
+                return;
+            }
+
+            // Si el índice pedido está fuera de rango, usar el último clip disponible (fallback)
+            if (videoIndex >= narrator.speakSequence.length) {
+                console.warn(`Índice ${videoIndex} fuera de rango para narrador "${narrator.name}". Usando último clip disponible.`);
+                videoIndex = narrator.speakSequence.length - 1;
+            } else if (videoIndex < 0) {
+                videoIndex = 0;
+            }
+
+            const videoSrc = narrator.speakSequence[videoIndex];
+
+            // Exclusión mutua: detener el reproductor principal (avatar)
+            if (typeof AudioPlayer.stop === 'function') {
+                AudioPlayer.stop(); // ahora sí existe en audio.js
+            }
+
+            // Reproducir overlay
+            playContainerVideo(videoElement, videoOverlay, icon, videoSrc, button);
+        }
+
+        function pauseContainerPlayback(videoElement, videoOverlay, icon) {
+            videoElement.pause();
+            videoElement.src = '';
+            videoOverlay.classList.remove('visible');
+            icon.className = 'fas fa-play';
+            // restaurar visibilidad del reproductor principal
+            mainPlayer.style.display = '';
+        }
+
+        function playContainerVideo(videoElement, videoOverlay, icon, videoSrc, button) {
+            // aseguramos que no haya loop
+            videoElement.loop = false;
+            videoElement.src = videoSrc;
+            videoElement.currentTime = 0;
+
+            videoElement.onloadedmetadata = function() {
+                videoOverlay.classList.add('visible');
+                videoElement.play().catch(e => console.error("Error al reproducir overlay:", e));
+                icon.className = 'fas fa-pause';
+                // ocultar el reproductor principal visualmente para ahorrar espacio
+                mainPlayer.style.display = 'none';
+                currentlyPlayingButton = button;
+            };
+
+            videoElement.onended = function() {
+                pauseContainerPlayback(videoElement, videoOverlay, icon);
+                currentlyPlayingButton = null;
+            };
+
+            videoElement.onpause = function() {
+                // si se pausó antes de terminar, limpiamos estado
+                if (!videoElement.ended) {
+                    pauseContainerPlayback(videoElement, videoOverlay, icon);
+                    currentlyPlayingButton = null;
+                }
+            };
+
+            // permitir click para pausar
+            videoElement.onclick = function(e) {
+                e.stopPropagation();
+                videoElement.pause();
+            };
+        }
+
+        function stopAll() {
+            if (currentlyPlayingButton) {
+                const btn = currentlyPlayingButton;
+                const cont = btn.closest('.content-container');
+                const vOverlay = cont.querySelector('.video-overlay-container');
+                const vEl = cont.querySelector('.overlay-video');
+                const ic = btn.querySelector('i');
+                pauseContainerPlayback(vEl, vOverlay, ic);
+                currentlyPlayingButton = null;
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', init);
+
+        return {
+            init,
+            stopAll
+        };
+    })();
+    </script>
+
+    <!-- Añadir este script al final del body, después de los scripts existentes -->
+<script>
+// Cerrar selector de narradores al hacer clic fuera
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        const narratorControl = document.querySelector('.narrator-control');
+        if (narratorControl.classList.contains('is-open') && 
+            !e.target.closest('.narrator-control')) {
+            narratorControl.classList.remove('is-open');
+        }
+    });
+});
+</script>
+
+<!-- Añadir este script al final del archivo HTML, después de todos los otros scripts -->
+<script>
+// === MÓDULO INDEPENDIENTE PARA ARRASTRAR EL REPRODUCTOR ===
+(function() {
+    'use strict';
+    
+    // Esperar a que el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        const audioPlayer = document.querySelector('.audio-player');
+        const playerClosed = document.querySelector('.player-closed');
+        
+        if (!audioPlayer || !playerClosed) return;
+        
+        let isDragging = false;
+        let currentX = 0;
+        let currentY = 0;
+        let initialX = 0;
+        let initialY = 0;
+        let xOffset = 0;
+        let yOffset = 0;
+        
+        // Obtener la posición inicial del reproductor
+        function getInitialPosition() {
+            const rect = audioPlayer.getBoundingClientRect();
+            xOffset = rect.left;
+            yOffset = rect.top;
+            audioPlayer.style.transform = `translate3d(0, 0, 0)`;
+            audioPlayer.style.left = rect.left + 'px';
+            audioPlayer.style.top = rect.top + 'px';
+            audioPlayer.style.right = 'auto';
+        }
+        
+        // Función para iniciar el arrastre
+        function dragStart(e) {
+            // Solo permitir arrastrar desde el avatar circular
+            if (!e.target.closest('.player-closed')) return;
+            
+            // Prevenir comportamiento por defecto
+            e.preventDefault();
+            
+            // Si es el primer arrastre, establecer posición absoluta
+            if (audioPlayer.style.position !== 'fixed') {
+                getInitialPosition();
+            }
+            
+            if (e.type === 'touchstart') {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+            
+            if (e.target.closest('.player-closed')) {
+                isDragging = true;
+                audioPlayer.classList.add('dragging');
+                
+                // Cambiar cursor globalmente mientras arrastra
+                document.body.style.cursor = 'grabbing';
+            }
+        }
+        
+        // Función para arrastrar
+        function drag(e) {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            
+            if (e.type === 'touchmove') {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+            
+            xOffset = currentX;
+            yOffset = currentY;
+            
+            // Aplicar límites para mantener el reproductor dentro de la ventana
+            const playerRect = audioPlayer.getBoundingClientRect();
+            const maxX = window.innerWidth - playerRect.width - 20;
+            const maxY = window.innerHeight - playerRect.height - 20;
+            
+            // Limitar posición
+            if (currentX < 20) currentX = 20;
+            if (currentX > maxX) currentX = maxX;
+            if (currentY < 20) currentY = 20;
+            if (currentY > maxY) currentY = maxY;
+            
+            xOffset = currentX;
+            yOffset = currentY;
+            
+            // Aplicar transformación con animación suave
+            setTranslate(currentX, currentY);
+        }
+        
+        // Función para terminar el arrastre
+        function dragEnd(e) {
+            if (!isDragging) return;
+            
+            initialX = currentX;
+            initialY = currentY;
+            
+            isDragging = false;
+            audioPlayer.classList.remove('dragging');
+            
+            // Restaurar cursor
+            document.body.style.cursor = '';
+            
+            // Efecto magnético a los bordes si está cerca
+            snapToEdge();
+        }
+        
+        // Función para aplicar transformación
+        function setTranslate(xPos, yPos) {
+            audioPlayer.style.left = xPos + 'px';
+            audioPlayer.style.top = yPos + 'px';
+        }
+        
+        // Efecto magnético a los bordes
+        function snapToEdge() {
+            const threshold = 50; // Distancia para el efecto magnético
+            const playerRect = audioPlayer.getBoundingClientRect();
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            let snapX = currentX;
+            let snapY = currentY;
+            let snapped = false;
+            
+            // Snap al borde izquierdo
+            if (playerRect.left < threshold) {
+                snapX = 20;
+                snapped = true;
+            }
+            // Snap al borde derecho
+            else if (windowWidth - playerRect.right < threshold) {
+                snapX = windowWidth - playerRect.width - 20;
+                snapped = true;
+            }
+            
+            // Snap al borde superior
+            if (playerRect.top < threshold) {
+                snapY = 20;
+                snapped = true;
+            }
+            // Snap al borde inferior
+            else if (windowHeight - playerRect.bottom < threshold) {
+                snapY = windowHeight - playerRect.height - 20;
+                snapped = true;
+            }
+            
+            if (snapped) {
+                // Aplicar animación suave al snap
+                audioPlayer.style.transition = 'left 0.3s ease, top 0.3s ease';
+                setTranslate(snapX, snapY);
+                currentX = snapX;
+                currentY = snapY;
+                xOffset = snapX;
+                yOffset = snapY;
+                
+                // Remover transición después de la animación
+                setTimeout(() => {
+                    audioPlayer.style.transition = '';
+                }, 300);
+            }
+        }
+        
+        // Event listeners para mouse
+        playerClosed.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+        
+        // Event listeners para touch (móviles)
+        playerClosed.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+        
+        // Prevenir selección de texto mientras arrastra
+        playerClosed.addEventListener('selectstart', function(e) {
+            if (isDragging) e.preventDefault();
+        });
+        
+        // Ajustar posición al cambiar el tamaño de la ventana
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                // Verificar si el reproductor está fuera de los límites
+                const playerRect = audioPlayer.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                
+                let needsAdjustment = false;
+                let newX = currentX;
+                let newY = currentY;
+                
+                if (playerRect.right > windowWidth) {
+                    newX = windowWidth - playerRect.width - 20;
+                    needsAdjustment = true;
+                }
+                
+                if (playerRect.bottom > windowHeight) {
+                    newY = windowHeight - playerRect.height - 20;
+                    needsAdjustment = true;
+                }
+                
+                if (needsAdjustment) {
+                    currentX = newX;
+                    currentY = newY;
+                    xOffset = newX;
+                    yOffset = newY;
+                    setTranslate(newX, newY);
+                }
+            }, 250);
+        });
+        
+        // === FUNCIÓN DE POSICIONAMIENTO INTELIGENTE ===
+        
+        // Botones de posición rápida (opcional - puedes activarlo con teclas)
+        document.addEventListener('keydown', function(e) {
+            // Solo funciona si no hay ningún input activo
+            if (document.activeElement.tagName === 'INPUT' || 
+                document.activeElement.tagName === 'TEXTAREA') return;
+            
+            // Ctrl/Cmd + Shift + tecla de dirección
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const playerRect = audioPlayer.getBoundingClientRect();
+                
+                let targetX = currentX;
+                let targetY = currentY;
+                
+                switch(e.key) {
+                    case 'ArrowUp': // Arriba centro
+                        targetX = (windowWidth - playerRect.width) / 2;
+                        targetY = 20;
+                        break;
+                    case 'ArrowDown': // Abajo centro
+                        targetX = (windowWidth - playerRect.width) / 2;
+                        targetY = windowHeight - playerRect.height - 20;
+                        break;
+                    case 'ArrowLeft': // Izquierda centro
+                        targetX = 20;
+                        targetY = (windowHeight - playerRect.height) / 2;
+                        break;
+                    case 'ArrowRight': // Derecha centro
+                        targetX = windowWidth - playerRect.width - 20;
+                        targetY = (windowHeight - playerRect.height) / 2;
+                        break;
+                    default:
+                        return;
+                }
+                
+                e.preventDefault();
+                
+                // Aplicar animación suave
+                audioPlayer.style.transition = 'left 0.4s ease, top 0.4s ease';
+                setTranslate(targetX, targetY);
+                currentX = targetX;
+                currentY = targetY;
+                xOffset = targetX;
+                yOffset = targetY;
+                
+                setTimeout(() => {
+                    audioPlayer.style.transition = '';
+                }, 400);
+            }
+        });
+        
+        // === INDICADOR VISUAL DE ARRASTRE ===
+        
+        // Añadir efecto visual cuando el mouse está sobre el área arrastrable
+        playerClosed.addEventListener('mouseenter', function() {
+            if (!isDragging) {
+                this.style.cursor = 'grab';
+                this.style.transform = 'scale(1.02)';
+            }
+        });
+        
+        playerClosed.addEventListener('mouseleave', function() {
+            if (!isDragging) {
+                this.style.cursor = 'pointer';
+                this.style.transform = '';
+            }
+        });
+        
+        // === GUARDAR POSICIÓN EN SESSIONSTORAGE (opcional) ===
+        // Nota: Como mencionaste que no se puede usar localStorage, esto está comentado
+        // Pero lo dejo aquí por si en el futuro lo necesitas en otro entorno
+        
+        /*
+        // Guardar posición cuando se mueve
+        function savePosition() {
+            const position = {
+                x: currentX,
+                y: currentY
+            };
+            sessionStorage.setItem('audioPlayerPosition', JSON.stringify(position));
+        }
+        
+        // Cargar posición guardada al iniciar
+        function loadPosition() {
+            const saved = sessionStorage.getItem('audioPlayerPosition');
+            if (saved) {
+                const position = JSON.parse(saved);
+                currentX = position.x;
+                currentY = position.y;
+                xOffset = position.x;
+                yOffset = position.y;
+                setTranslate(position.x, position.y);
+            }
+        }
+        
+        // Llamar al cargar
+        loadPosition();
+        
+        // Guardar al terminar de arrastrar
+        playerClosed.addEventListener('mouseup', savePosition);
+        playerClosed.addEventListener('touchend', savePosition);
+        */
+        
+        // === TOOLTIP DE AYUDA ===
+        
+        // Mostrar tooltip la primera vez
+        let tooltipShown = false;
+        
+        function showDragTooltip() {
+            if (tooltipShown) return;
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'drag-tooltip';
+            tooltip.innerHTML = '💡 Mantén presionado el avatar para mover el reproductor';
+            tooltip.style.cssText = `
+                position: fixed;
+                top: ${yOffset + 90}px;
+                left: ${xOffset}px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                z-index: 10000;
+                pointer-events: none;
+                animation: fadeInOut 3s ease;
+                white-space: nowrap;
+            `;
+            
+            // Añadir animación CSS temporal
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(10px); }
+                    20% { opacity: 1; transform: translateY(0); }
+                    80% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-10px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(tooltip);
+            tooltipShown = true;
+            
+            // Remover después de la animación
+            setTimeout(() => {
+                tooltip.remove();
+                style.remove();
+            }, 3000);
+        }
+        
+        // Mostrar tooltip después de 2 segundos
+        setTimeout(showDragTooltip, 2000);
+        
+    });
+})();
+</script>
+
+<!-- Estilos adicionales para efectos durante el arrastre -->
+<style>
+/* Efectos adicionales durante el arrastre */
+.audio-player.dragging {
+    transition: none !important;
+    animation: none !important;
+}
+
+.audio-player.dragging .player-closed {
+    cursor: grabbing !important;
+    transform: scale(1.1) !important;
+    box-shadow: 
+        0 25px 60px rgba(0,0,0,0.3),
+        0 0 0 3px rgba(102, 126, 234, 0.5) !important;
+}
+
+.audio-player.dragging .player-closed .avatar-video {
+    filter: brightness(1.1);
+}
+
+/* Desactivar selección de texto durante el arrastre */
+.audio-player.dragging,
+.audio-player.dragging * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+/* Indicador visual de área arrastrable */
+.player-closed:hover:not(.dragging) {
+    box-shadow: 
+        0 0 0 2px rgba(102, 126, 234, 0.3),
+        12px 12px 24px rgba(0,0,0,0.15),
+        -12px -12px 24px rgba(255,255,255,0.1);
+}
+
+/* Transición suave al soltar */
+.audio-player:not(.dragging) {
+    transition: left 0.3s ease, top 0.3s ease, transform 0.3s ease;
+}
+</style>
+
+</body>
+</html>
