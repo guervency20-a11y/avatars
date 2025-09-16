@@ -26,7 +26,7 @@ const AudioPlayer = (() => {
     const narratorData = {
         1: {
             name: 'Nara',
-            sleep: 'video/nara-espera.mp4',
+            sleep: 'nara-espera.mp4',
             speakSequence: [
                 'nara-intro.mp4',
                 'nara-speak01.mp4',
@@ -46,17 +46,17 @@ const AudioPlayer = (() => {
         },
         3: {
             name: 'Vid',
-            sleep: 'video/vid-espera.mp4',
+            sleep: 'vid-espera.mp4',
             speakSequence: [
-                'video/vid-intro.mp4',
-                'video/vid-speak01.mp4',
-                'video/vid-speak02.mp4',
-                'video/vid-speak03.mp4',
+                'vid-intro.mp4',
+                'vid-speak01.mp4',
+                'vid-speak02.mp4',
+                'vid-speak03.mp4',
             ]
         },
         4: {
             name: 'Ava',
-            sleep: 'video/ava-espera.mp4',
+            sleep: 'ava-espera.mp4',
             speakSequence: [
                 'ava-intro.mp4',
                 'ava-speak01.mp4',
@@ -403,3 +403,4 @@ const AudioPlayer = (() => {
         stop
     };
 })();
+
