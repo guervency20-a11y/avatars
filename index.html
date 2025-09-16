@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Reproductor de Audio Avanzado con Avatares Múltiples</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="audio.css">
+    <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body>
 
@@ -22,25 +22,25 @@
             <div class="narrator-control">
                 <div class="narrators-button" role="button" aria-label="Seleccionar narrador"></div>
                 <div class="narrators-selector">
-                    <!-- NOTE: removí 'loop' de los preview para respetar tu pedido "cada video debe ir de inicio a fin" -->
+                    <!-- CORREGIDO: Agregado 'loop' y reordenado según tu pedido -->
                     <div class="narrator-option active" data-narrator="1" data-name="Nara">
-                        <video class="preview-video" muted autoplay>
-                            <source src="video/nara-espera.mp4" type="video/mp4">
+                        <video class="preview-video" muted autoplay loop>
+                            <source src="nara-espera.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="narrator-option" data-narrator="2" data-name="Ava">
-                        <video class="preview-video" muted autoplay>
-                            <source src="video/ava-espera.mp4" type="video/mp4">
+                    <div class="narrator-option" data-narrator="2" data-name="Mimi">
+                        <video class="preview-video" muted autoplay loop>
+                            <source src="mimi-espera.mp4" type="video/mp4">
                         </video>
                     </div>
                     <div class="narrator-option" data-narrator="3" data-name="Vid">
-                        <video class="preview-video" muted autoplay>
-                            <source src="video/vid-espera.mp4" type="video/mp4">
+                        <video class="preview-video" muted autoplay loop>
+                            <source src="vid-espera.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="narrator-option" data-narrator="4" data-name="Marco">
-                        <video class="preview-video" muted autoplay>
-                            <source src="video/marco-espera.mp4" type="video/mp4">
+                    <div class="narrator-option" data-narrator="4" data-name="Ava">
+                        <video class="preview-video" muted autoplay loop>
+                            <source src="ava-espera.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -55,13 +55,6 @@
                 <div class="time-display">0:00</div>
             </div>
 
-            <div class="speed-control">
-                <div class="speed-button" data-speed="0.75">0.75x</div>
-                <div class="speed-button active" data-speed="1">1x</div>
-                <div class="speed-button" data-speed="1.25">1.25x</div>
-                <div class="speed-button" data-speed="1.5">1.5x</div>
-            </div>
-
             <div class="equalizer">
                 <div class="eq-bar" style="height: 8px;"></div>
                 <div class="eq-bar" style="height: 12px;"></div>
@@ -72,8 +65,7 @@
         </div>
 
         <div class="player-closed">
-            <!-- removí loop del avatar de "sleep" para respetar "solo de inicio a fin" -->
-            <video class="avatar-video" id="avatarVideoSleep" muted></video>
+            <video class="avatar-video" id="avatarVideoSleep" muted loop></video>
             <video class="avatar-video" id="avatarVideoSpeak"></video>
         </div>
     </div>
@@ -90,7 +82,7 @@
                         <video class="overlay-video"></video>
                     </div>
                     <h3>Contenedor 1</h3>
-                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado (avatar-espera intro y speak01).</p>
                     <div class="audio-indicator">
                         <i class="fas fa-volume-up"></i>
                         <span>Reproduciendo contenido</span>
@@ -98,7 +90,6 @@
                 </div>
 
                 <div class="content-container">
-                    <!-- ojo: índice 3 -> algunos narradores no tienen 4 clips; ahora hay fallback -->
                     <button class="container-play-btn" data-video-index="2">
                         <i class="fas fa-play"></i>
                     </button>
@@ -121,7 +112,7 @@
                         <video class="overlay-video"></video>
                     </div>
                     <h3>Contenedor 3 pa manana</h3>
-                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <p>Este contenedor reproduce el quinto video (índice 4) del avatar seleccionado (speak02 o equivalente).</p>
                     <div class="audio-indicator">
                         <i class="fas fa-volume-up"></i>
                         <span>Reproduciendo contenido</span>
@@ -129,14 +120,14 @@
                 </div>
 
                 <div class="content-container">
-                    <button class="container-play-btn" data-video-index="4">
-                        <i class="fas fa-play"></i>
-                    </button>
+                   <!-- <button class="container-play-btn" data-video-index="4"> -->
+                       <!-- <i class="fas fa-play"></i>
+                    </button> -->
                     <div class="video-overlay-container">
                         <video class="overlay-video"></video>
                     </div>
                     <h3>Contenedor 4 manana tambien</h3>
-                    <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
+                    <p>Este contenedor no reproducira nada pero si lo iciera reproduciria el sexto video (índice 5) del avatar seleccionado (speak03 o equivalente).ahora ya no cuenta porque los archivos estan mui pesados asi que toca suvirlo a youtube oh google drive para extraer los links bien feos y poco explicitos, vaya desgracia</p>
                     <div class="audio-indicator">
                         <i class="fas fa-volume-up"></i>
                         <span>Reproduciendo contenido</span>
@@ -590,41 +581,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.style.transform = '';
             }
         });
-        
-        // === GUARDAR POSICIÓN EN SESSIONSTORAGE (opcional) ===
-        // Nota: Como mencionaste que no se puede usar localStorage, esto está comentado
-        // Pero lo dejo aquí por si en el futuro lo necesitas en otro entorno
-        
-        /*
-        // Guardar posición cuando se mueve
-        function savePosition() {
-            const position = {
-                x: currentX,
-                y: currentY
-            };
-            sessionStorage.setItem('audioPlayerPosition', JSON.stringify(position));
-        }
-        
-        // Cargar posición guardada al iniciar
-        function loadPosition() {
-            const saved = sessionStorage.getItem('audioPlayerPosition');
-            if (saved) {
-                const position = JSON.parse(saved);
-                currentX = position.x;
-                currentY = position.y;
-                xOffset = position.x;
-                yOffset = position.y;
-                setTranslate(position.x, position.y);
-            }
-        }
-        
-        // Llamar al cargar
-        loadPosition();
-        
-        // Guardar al terminar de arrastrar
-        playerClosed.addEventListener('mouseup', savePosition);
-        playerClosed.addEventListener('touchend', savePosition);
-        */
         
         // === TOOLTIP DE AYUDA ===
         
