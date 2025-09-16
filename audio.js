@@ -22,26 +22,26 @@ const AudioPlayer = (() => {
         avatarVideoSpeak: document.getElementById('avatarVideoSpeak')
     };
 
-    // Datos de los narradores
+    // Datos de los narradores - CAMBIADO: Mimi ahora es la 2da narradora
     const narratorData = {
         1: {
             name: 'Nara',
             sleep: 'video/nara-espera.mp4',
             speakSequence: [
-                'video/nara-intro.mp4',
-                'video/nara-speak01.mp4',
-                'video/nara-speak02.mp4',
-                'video/nara-speak03.mp4'
+                'nara-intro.mp4',
+                'nara-speak01.mp4',
+                'nara-speak02.mp4',
+                'nara-speak03.mp4'
             ]
         },
         2: {
-            name: 'Ava',
-            sleep: 'video/ava-espera.mp4',
+            name: 'Mimi',
+            sleep: 'mimi-espera.mp4',
             speakSequence: [
-                'video/ava-intro.mp4',
-                'video/ava-speak01.mp4',
-                'video/ava-speak02.mp4',
-                'video/ava-speak03.mp4',
+                'mimi-intro.mp4',
+                'mimi-speak01.mp4',
+                'mimi-speak02.mp4',
+                'mimi-speak03.mp4',
             ]
         },
         3: {
@@ -55,13 +55,13 @@ const AudioPlayer = (() => {
             ]
         },
         4: {
-            name: 'Marco',
-            sleep: 'video/marco-espera.mp4',
+            name: 'Ava',
+            sleep: 'video/ava-espera.mp4',
             speakSequence: [
-                'video/marco-intro.mp4',
-                'video/marco-speak01.mp4',//de momento no tienen video asi que los reemplazo por esos de momento
-                'video/marco-speak02.mp4',
-                'video/marco-speak03.mp4',
+                'ava-intro.mp4',
+                'ava-speak01.mp4',
+                'ava-speak02.mp4',
+                'ava-speak03.mp4',
             ]
         }
     };
@@ -74,11 +74,16 @@ const AudioPlayer = (() => {
         currentNarratorId: 1,
         currentVideoIndex: 0,
         currentSpeed: 1,
-        eqAnimation: null
+        eqAnimation: null,
+        dragStartPos: { x: 0, y: 0 }
     };
 
     // Inicialización
     function init() {
+        // MEJORADO: Habilitar el bucle para el video de espera y asegurar que funcione
+        elements.avatarVideoSleep.loop = true;
+        elements.avatarVideoSleep.muted = true;
+
         setupEventListeners();
         changeNarrator(state.currentNarratorId, false);
     }
@@ -86,9 +91,23 @@ const AudioPlayer = (() => {
     function setupEventListeners() {
         // controles principales
         elements.playButtonMain.addEventListener('click', toggleNarratorPlayback);
-        elements.playerClosed.addEventListener('click', toggleNarratorPlayback);
         elements.prevButton.addEventListener('click', () => navigateSequence('prev'));
         elements.nextButton.addEventListener('click', () => navigateSequence('next'));
+
+        // Lógica mejorada para el avatar cerrado (diferencia clic y arrastre)
+        elements.playerClosed.addEventListener('mousedown', (e) => {
+            state.dragStartPos.x = e.clientX;
+            state.dragStartPos.y = e.clientY;
+        });
+
+        elements.playerClosed.addEventListener('mouseup', (e) => {
+            const deltaX = Math.abs(e.clientX - state.dragStartPos.x);
+            const deltaY = Math.abs(e.clientY - state.dragStartPos.y);
+            // Si el cursor se movió menos de 10px, se considera un clic
+            if (deltaX < 10 && deltaY < 10) {
+                toggleNarratorPlayback();
+            }
+        });
 
         // eventos del avatar speak
         elements.avatarVideoSpeak.addEventListener('ended', handleVideoEnded);
@@ -125,14 +144,14 @@ const AudioPlayer = (() => {
 
         // Cerrar expansión al hacer clic fuera
         document.addEventListener('click', function(e) {
-            if (state.isExpanded && 
-                !elements.audioPlayer.contains(e.target) && 
+            if (state.isExpanded &&
+                !elements.audioPlayer.contains(e.target) &&
                 !elements.expandButton.contains(e.target)) {
                 toggleExpand();
             }
-            
+
             // Cerrar selector de narradores al hacer clic fuera
-            if (elements.narratorControl.classList.contains('is-open') && 
+            if (elements.narratorControl.classList.contains('is-open') &&
                 !e.target.closest('.narrator-control')) {
                 elements.narratorControl.classList.remove('is-open');
             }
@@ -144,6 +163,7 @@ const AudioPlayer = (() => {
             if (narrator && narrator.sleep) {
                 elements.avatarVideoSleep.src = narrator.sleep;
                 elements.avatarVideoSleep.muted = true;
+                elements.avatarVideoSleep.loop = true; // ASEGURAR BUCLE
                 elements.avatarVideoSleep.play().catch(() => {});
             }
         });
@@ -151,9 +171,8 @@ const AudioPlayer = (() => {
 
     // Reproducir video actual (narrador)
     function playCurrentVideo() {
-        // detener cualquier video de contenedores abiertos (exclusión mutua)
         if (window.ContentContainers && typeof window.ContentContainers.stopAll === 'function') {
-            try { window.ContentContainers.stopAll(); } catch(e){ /* ignore */ }
+            try { window.ContentContainers.stopAll(); } catch (e) { /* ignore */ }
         }
 
         const narrator = narratorData[state.currentNarratorId];
@@ -162,14 +181,12 @@ const AudioPlayer = (() => {
             return;
         }
 
-        // asegurar índice dentro del rango
         if (state.currentVideoIndex >= narrator.speakSequence.length) {
             state.currentVideoIndex = narrator.speakSequence.length - 1;
         } else if (state.currentVideoIndex < 0) {
             state.currentVideoIndex = 0;
         }
 
-        // dejar de mostrar sleep y preparar speak (sin loop)
         elements.avatarVideoSleep.classList.remove('active');
         elements.avatarVideoSleep.pause();
 
@@ -191,14 +208,14 @@ const AudioPlayer = (() => {
         state.currentVideoIndex = 0;
 
         elements.avatarVideoSpeak.classList.remove('active');
-        try { elements.avatarVideoSpeak.pause(); } catch(e) {}
+        try { elements.avatarVideoSpeak.pause(); } catch (e) {}
 
         const narrator = narratorData[state.currentNarratorId];
-        // restaurar imagen de "sleep" (sin loop)
         if (narrator && narrator.sleep) {
             elements.avatarVideoSleep.src = narrator.sleep;
             elements.avatarVideoSleep.classList.add('active');
             elements.avatarVideoSleep.muted = true;
+            elements.avatarVideoSleep.loop = true; // ASEGURAR BUCLE
             elements.avatarVideoSleep.play().catch(() => {});
         }
 
@@ -206,7 +223,6 @@ const AudioPlayer = (() => {
         stopEqualizer();
         updatePlayButtons();
 
-        // reset progreso
         if (elements.progressFill) elements.progressFill.style.width = '0%';
         if (elements.timeDisplay) elements.timeDisplay.textContent = '0:00';
     }
@@ -218,7 +234,7 @@ const AudioPlayer = (() => {
         if (state.isNarratorPlaying) {
             playCurrentVideo();
         } else {
-            try { elements.avatarVideoSpeak.pause(); } catch(e){}
+            try { elements.avatarVideoSpeak.pause(); } catch (e) {}
             elements.playerClosed.classList.remove('speaking');
             stopEqualizer();
         }
@@ -233,7 +249,6 @@ const AudioPlayer = (() => {
         if (direction === 'next') {
             state.currentVideoIndex++;
             if (state.currentVideoIndex >= narrator.speakSequence.length) {
-                // ya no ciclar automáticamente: si excede, poner al último disponible
                 state.currentVideoIndex = narrator.speakSequence.length - 1;
             }
         } else if (direction === 'prev') {
@@ -246,7 +261,6 @@ const AudioPlayer = (() => {
         if (state.isNarratorPlaying) {
             playCurrentVideo();
         } else {
-            // preparar vista previa del clip seleccionado (no reproducir)
             elements.avatarVideoSpeak.src = narrator.speakSequence[state.currentVideoIndex];
         }
     }
@@ -266,21 +280,17 @@ const AudioPlayer = (() => {
         } else {
             stopPlayback();
         }
-        
-        // Cerrar automáticamente el selector de narrador y contraer el reproductor
+
         elements.narratorControl.classList.remove('is-open');
         if (state.isExpanded) {
             toggleExpand();
         }
     }
 
-    // manejar fin: YA NO AVANZA automáticamente a siguiente, se detiene
     function handleVideoEnded() {
-        // según tu pedido: cada video debe ir de inicio a fin y parar ahí mismo
         stopPlayback();
     }
 
-    // progreso
     function updateProgress() {
         const { currentTime, duration } = elements.avatarVideoSpeak;
         if (duration > 0) {
@@ -292,7 +302,6 @@ const AudioPlayer = (() => {
         }
     }
 
-    // seek
     function seekVideo(e) {
         const rect = this.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
@@ -302,50 +311,65 @@ const AudioPlayer = (() => {
         }
     }
 
-    // musica fondo
+    // MEJORADO: Función de música de fondo con indicador visual
     function toggleBackgroundMusic() {
         state.isMusicPlaying = !state.isMusicPlaying;
         if (state.isMusicPlaying) {
             elements.backgroundMusic.play().catch(e => console.error("Error al reproducir música:", e));
             elements.musicButton.classList.add('active');
+            elements.musicButton.classList.remove('muted');
         } else {
             elements.backgroundMusic.pause();
             elements.musicButton.classList.remove('active');
+            elements.musicButton.classList.add('muted');
         }
     }
 
-    // selector narrador UI
     function toggleNarratorSelector() {
-        elements.narratorControl.classList.toggle('is-open');
+        // NUEVO: Detectar posición y ajustar dirección del selector
+        const narratorControl = elements.narratorControl;
+        const audioPlayer = elements.audioPlayer;
+        const rect = audioPlayer.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Si el reproductor está en la mitad inferior de la pantalla, abrir hacia arriba
+        if (rect.bottom > windowHeight * 0.6) {
+            narratorControl.classList.add('open-upward');
+        } else {
+            narratorControl.classList.remove('open-upward');
+        }
+        
+        narratorControl.classList.toggle('is-open');
     }
 
-    // expandir/contraer: además ocultamos el avatar circular mientras esté expandido
+    //-- MEJORA: expandir/contraer ahora centra el reproductor
     function toggleExpand(e) {
-        // si se llama desde botón, e puede ser evento
         if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
 
         state.isExpanded = !state.isExpanded;
         elements.audioPlayer.classList.toggle('expanded', state.isExpanded);
 
-        // Ocultar avatar circular (playerClosed) al expandir, y mostrar al colapsar
         if (state.isExpanded) {
             elements.playerClosed.style.display = 'none';
+            // Al expandir, se centra
+            elements.audioPlayer.classList.add('player-centered');
         } else {
             elements.playerClosed.style.display = '';
+            // Al contraer, se quita el centrado para que vuelva a su posición de arrastre
+            elements.audioPlayer.classList.remove('player-centered');
         }
     }
 
     function updatePlayButtons() {
-        const playIcon = elements.playButtonMain.querySelector('.play-icon');
-        if (!playIcon) return;
+        const playButtonMain = elements.playButtonMain;
+        if (!playButtonMain) return;
         if (state.isNarratorPlaying) {
-            playIcon.classList.add('playing');
+            playButtonMain.classList.add('playing');
         } else {
-            playIcon.classList.remove('playing');
+            playButtonMain.classList.remove('playing');
         }
     }
 
-    // ecualizador
     function startEqualizer() {
         stopEqualizer();
         state.eqAnimation = setInterval(() => {
@@ -364,20 +388,16 @@ const AudioPlayer = (() => {
         elements.eqBars.forEach(bar => bar.style.height = '5px');
     }
 
-    // obtener narrador actual (público)
     function getCurrentNarrator() {
         return narratorData[state.currentNarratorId];
     }
 
-    // Exponer stop() para que ContentContainers pueda detener al narrador
     function stop() {
         stopPlayback();
     }
 
-    // Init
     init();
 
-    // API pública
     return {
         getCurrentNarrator,
         stop
