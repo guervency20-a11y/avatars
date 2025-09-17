@@ -121,6 +121,7 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
+.avatar-image,
 .avatar-video {
     position: absolute;
     top: 50%;
@@ -134,6 +135,7 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.avatar-image.active,
 .avatar-video.active {
     opacity: 1;
     animation: subtlePulse 2s ease-in-out infinite;
@@ -339,7 +341,7 @@ body {
     overflow: hidden;
 }
 
-.narrator-option .preview-video {
+.narrator-option .preview-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -440,19 +442,20 @@ body {
     width: 4px;
     background: var(--primary-gradient);
     border-radius: 2px;
-    animation: equalizerDance 1s ease-in-out infinite alternate;
+    height: 5px;
+    animation: equalizerDance 1.2s infinite ease-in-out;
 }
 
-.eq-bar:nth-child(2) { animation-delay: 0.2s; }
-.eq-bar:nth-child(3) { animation-delay: 0.4s; }
-.eq-bar:nth-child(4) { animation-delay: 0.6s; }
-.eq-bar:nth-child(5) { animation-delay: 0.8s; }
+.eq-bar:nth-child(1) { animation-delay: 0s; }
+.eq-bar:nth-child(2) { animation-delay: 0.3s; }
+.eq-bar:nth-child(3) { animation-delay: 0.6s; }
+.eq-bar:nth-child(4) { animation-delay: 0.9s; }
+.eq-bar:nth-child(5) { animation-delay: 1.2s; }
 
 @keyframes equalizerDance {
-    from { height: 4px; }
-    to { height: 20px; }
+    0%, 100% { height: 5px; }
+    50% { height: 20px; }
 }
-
 
 /* ==========================================================================
    Secciones de Contenido
@@ -668,7 +671,7 @@ body {
     .play-button-main { width: 40px; height: 40px; }
     .expand-button { width: 30px; height: 60px; }
     .player-closed { width: 70px; height: 70px; }
-    .avatar-video { width: 55px; height: 55px; }
+    .avatar-image, .avatar-video { width: 55px; height: 55px; }
 
     .narrator-option { width: 48px; height: 48px; }
     
@@ -704,7 +707,8 @@ body {
         0 0 0 3px rgba(102, 126, 234, 0.5) !important;
 }
 
-.audio-player.dragging .player-closed .avatar-video {
+.audio-player.dragging .player-closed .avatar-video,
+.audio-player.dragging .player-closed .avatar-image {
     filter: brightness(1.1);
 }
 
@@ -729,3 +733,4 @@ body {
 .audio-player:not(.dragging) {
     transition: left 0.3s ease, top 0.3s ease, transform 0.3s ease;
 }
+
