@@ -133,6 +133,9 @@ body {
     transition: all 0.3s ease;
     opacity: 0;
     transform: translate(-50%, -50%);
+    /* Optimizaciones GPU */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 
 .avatar-image.active,
@@ -734,3 +737,42 @@ body {
     transition: left 0.3s ease, top 0.3s ease, transform 0.3s ease;
 }
 
+/* Optimizaciones GPU para videos */
+.avatar-video, .overlay-video, .video-placeholder {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* CORRECCIÓN: Asegurar que el avatar mantenga su forma circular durante el arrastre */
+.audio-player {
+    contain: layout;
+}
+
+.player-closed {
+    position: relative;
+    z-index: 1002;
+}
+
+/* Mejoras para el arrastre seguro */
+.audio-player.dragging {
+    z-index: 10000;
+}
+
+@media (max-width: 768px) {
+    /*
+    * Aquí se aplican estilos solo para pantallas pequeñas
+    */
+
+    .audio-player {
+        backdrop-filter: none; /* Desactiva el efecto de vidrio esmerilado */
+    }
+
+    .audio-player .player-closed {
+        box-shadow: none !important; /* Desactiva las sombras */
+    }
+
+    .content-container {
+        box-shadow: none; /* Si tienes sombras en los contenedores, desactívalas aquí */
+    }
+}

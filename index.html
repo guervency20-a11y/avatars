@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="audio.css">
     <style>
-    /* Estilos adicionales para mejorar la experiencia */
     .content-container .container-play-btn {
         transition: all 0.3s ease;
     }
@@ -23,6 +22,13 @@
     
     .content-container.playing .audio-indicator {
         opacity: 1;
+    }
+    
+    /* Optimizaciones GPU para videos */
+    .avatar-video, .overlay-video, .video-placeholder {
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        transform: translateZ(0);
     }
     </style>
 </head>
@@ -43,19 +49,19 @@
                 <div class="narrators-selector">
                     <div class="narrator-option active" data-narrator="1" data-name="Nara">
                         <img class="preview-image" src="nara-preview.jpg" alt="Nara">
-                        <video class="video-placeholder" loop muted preload="none" data-video="nara-espera.mp4"></video>
+                        <video class="video-placeholder" loop playsinline webkit-playsinline preload="none" data-src="encoded_360/nara-espera_360.mp4" poster="nara-preview.jpg"></video>
                     </div>
                     <div class="narrator-option" data-narrator="2" data-name="Mimi">
                         <img class="preview-image" src="mimi-preview.png" alt="Mimi">
-                        <video class="video-placeholder" loop muted preload="none" data-video="mimi-espera.mp4"></video>
+                        <video class="video-placeholder" loop playsinline webkit-playsinline preload="none" data-src="encoded_360/mimi-espera_360.mp4" poster="mimi-preview.png"></video>
                     </div>
                     <div class="narrator-option" data-narrator="3" data-name="Vid">
                         <img class="preview-image" src="vid-preview.png" alt="Vid">
-                        <video class="video-placeholder" loop muted preload="none" data-video="vid-espera.mp4"></video>
+                        <video class="video-placeholder" loop playsinline webkit-playsinline preload="none" data-src="encoded_360/vid-espera_360.mp4" poster="vid-preview.png"></video>
                     </div>
                     <div class="narrator-option" data-narrator="4" data-name="Ava">
                         <img class="preview-image" src="ava-preview.png" alt="Ava">
-                        <video class="video-placeholder" loop muted preload="none" data-video="ava-espera.mp4"></video>
+                        <video class="video-placeholder" loop playsinline webkit-playsinline preload="none" data-src="encoded_360/ava-espera_360.mp4" poster="ava-preview.png"></video>
                     </div>
                 </div>
             </div>
@@ -80,8 +86,8 @@
 
         <div class="player-closed">
             <img class="avatar-image" id="avatarImageSleep" src="nara-preview.jpg" alt="Avatar Sleep">
-            <video class="avatar-video" id="avatarVideoSpeak" preload="none"></video>
-            <video class="avatar-video" id="avatarVideoSleep" loop muted preload="none"></video>
+            <video class="avatar-video" id="avatarVideoSpeak" playsinline webkit-playsinline preload="metadata" data-src=""></video>
+            <video class="avatar-video" id="avatarVideoSleep" loop playsinline webkit-playsinline preload="metadata" data-src="encoded_360/nara-espera_360.mp4" poster="nara-preview.jpg"></video>
         </div>
     </div>
 
@@ -94,7 +100,7 @@
                         <i class="fas fa-play"></i>
                     </button>
                     <div class="video-overlay-container">
-                        <video class="overlay-video" preload="none"></video>
+                        <video class="overlay-video" playsinline webkit-playsinline preload="metadata" data-src=""></video>
                     </div>
                     <h3>Contenedor 1</h3>
                     <p>Este contenedor reproduce el tercer video (índice 2) del avatar seleccionado.</p>
@@ -109,7 +115,7 @@
                         <i class="fas fa-play"></i>
                     </button>
                     <div class="video-overlay-container">
-                        <video class="overlay-video" preload="none"></video>
+                        <video class="overlay-video" playsinline webkit-playsinline preload="metadata" data-src=""></video>
                     </div>
                     <h3>Contenedor 2</h3>
                     <p>Este contenedor reproduce el cuarto video (índice 3) del avatar seleccionado.</p>
@@ -124,7 +130,7 @@
                         <i class="fas fa-play"></i>
                     </button>
                     <div class="video-overlay-container">
-                        <video class="overlay-video" preload="none"></video>
+                        <video class="overlay-video"playsinline webkit-playsinline preload="metadata" data-src=""></video>
                     </div>
                     <h3>Contenedor 3</h3>
                     <p>Este contenedor reproduce el quinto video (índice 4) del avatar seleccionado.</p>
@@ -139,7 +145,7 @@
                         <i class="fas fa-play"></i>
                     </button>
                     <div class="video-overlay-container">
-                        <video class="overlay-video" preload="none"></video>
+                        <video class="overlay-video"playsinline webkit-playsinline preload="metadata" data-src=""></video>
                     </div>
                     <h3>Contenedor 4</h3>
                     <p>Este contenedor reproduce el sexto video (índice 5) del avatar seleccionado.</p>
